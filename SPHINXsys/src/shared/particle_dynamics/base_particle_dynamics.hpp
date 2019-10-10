@@ -72,13 +72,13 @@ namespace SPH {
 		ReduceFunctor<ReturnType> reduce_functor, ReduceOperation ruduce_operation, Real dt)
 	{
 		return parallel_reduce(blocked_range<size_t>(0, number_of_particles),
-			initial_reference, [&](const blocked_range<size_t>& r, ReturnType temp)->ReturnType {
+			initial_reference, [=](const blocked_range<size_t>& r, ReturnType temp)->ReturnType {
 			for (size_t i = r.begin(); i != r.end(); ++i) {
 				temp = ruduce_operation(temp, reduce_functor(i, dt));
 			}
 			return temp;
 		},
-			[&](ReturnType x, ReturnType y)->ReturnType {
+			[=](ReturnType x, ReturnType y)->ReturnType {
 			return ruduce_operation(x, y);
 		}
 		);

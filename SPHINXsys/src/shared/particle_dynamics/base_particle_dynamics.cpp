@@ -15,7 +15,7 @@ namespace SPH
 	void InnerIterator_parallel(size_t number_of_particles, InnerFunctor inner_functor, Real dt)
 	{
 		parallel_for(blocked_range<size_t>(0, number_of_particles),
-			[&](const blocked_range<size_t>& r) {
+			[=](const blocked_range<size_t>& r) {
 			for (size_t i = r.begin(); i < r.end(); ++i) {
 				inner_functor(i, dt);
 			}
@@ -37,7 +37,7 @@ namespace SPH
 	{
 		for (size_t k = 0; k < indexes_interacting_particles.size(); ++k)
 			parallel_for(blocked_range<size_t>(0, (*indexes_interacting_particles[k]).size()),
-				[&](const blocked_range<size_t>& r) {
+				[&, contact_functor](const blocked_range<size_t>& r) {
 			for (size_t l = r.begin(); l < r.end(); ++l) {
 				size_t particle_index_i = (*indexes_interacting_particles[k])[l];
 				contact_functor(particle_index_i, k, dt);
@@ -86,7 +86,7 @@ namespace SPH
 			StdVec<IndexVector> &lists_particle_indexes
 				= by_cell_lists_particle_indexes[k];
 			parallel_for(blocked_range<size_t>(0, lists_particle_indexes.size()),
-				[&](const blocked_range<size_t>& r) {
+				[&, inner_functor](const blocked_range<size_t>& r) {
 				for (size_t l = r.begin(); l < r.end(); ++l) {
 					for (size_t i = 0; i < lists_particle_indexes[l].size(); ++i)
 					{
@@ -101,7 +101,7 @@ namespace SPH
 			StdVec<IndexVector> &lists_particle_indexes
 				= by_cell_lists_particle_indexes[k - 1];
 			parallel_for(blocked_range<size_t>(0, lists_particle_indexes.size()),
-				[&](const blocked_range<size_t>& r) {
+				[&, inner_functor](const blocked_range<size_t>& r) {
 				for (size_t l = r.end(); l >= r.begin() + 1; --l) {
 					IndexVector &particle_indexes = lists_particle_indexes[l - 1];
 					for (size_t i = particle_indexes.size(); i >= 1; --i)
