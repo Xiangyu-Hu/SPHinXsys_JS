@@ -43,7 +43,7 @@ namespace SPH {
 	void MeshCellLinkedList::UpdateCellLists(SPHBody &body)
 	{
 		ClearCellLists();
-		StdVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
+		StdLargeVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
 
 		//rebuild the corresponding particle list.
 		parallel_for(blocked_range<size_t>(0, base_particle_data.size()),
@@ -68,16 +68,17 @@ namespace SPH {
 	//===============================================================//
 	void MeshCellLinkedList::UpdateInnerConfiguration(SPHBody &body)
 	{
-		StdVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
+		StdLargeVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
 		NeighborList current_inner_configuration = body.current_inner_configuration_;
 
 		parallel_for(blocked_range<size_t>(0, body.number_of_particles_),
 			[&](const blocked_range<size_t>& r) {
 			for (size_t num = r.begin(); num != r.end(); ++num)
 			{
-				int i = (int)base_particle_data[num].cell_location_[0];
-				int j = (int)base_particle_data[num].cell_location_[1];
-				int k = (int)base_particle_data[num].cell_location_[2];
+				BaseParticleData &base_particle_data_i = base_particle_data[num];
+				int i = (int)base_particle_data_i.cell_location_[0];
+				int j = (int)base_particle_data_i.cell_location_[1];
+				int k = (int)base_particle_data_i.cell_location_[2];
 
 				StdVec<NeighboringParticle> &current_neighbor_list = current_inner_configuration[num];
 				size_t current_number_of_neighbors = current_neighbor_list.size();
@@ -93,7 +94,7 @@ namespace SPH {
 							for (size_t n = 0; n != target_particles.size(); ++n)
 							{
 								//displacement pointing from neighboring particle to origin particle
-								Vecd displacement = base_particle_data[num].pos_n_ - target_particles[n].second;
+								Vecd displacement = base_particle_data_i.pos_n_ - target_particles[n].second;
 								if (displacement.norm() <= cutoff_radius_ && num != target_particles[n].first)
 								{
 									count_of_neigbors >= current_number_of_neighbors ?
@@ -116,16 +117,17 @@ namespace SPH {
 	void MeshCellLinkedList
 		::BuildReferenceInnerConfiguration(SPHBody &body)
 	{
-		StdVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
+		StdLargeVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
 		ReferenceNeighborList reference_inner_configuration = body.reference_inner_configuration_;
 
 		parallel_for(blocked_range<size_t>(0, body.number_of_particles_),
 			[&](const blocked_range<size_t>& r) {
 			for (size_t num = r.begin(); num != r.end(); ++num)
 			{
-				int i = (int)base_particle_data[num].cell_location_[0];
-				int j = (int)base_particle_data[num].cell_location_[1];
-				int k = (int)base_particle_data[num].cell_location_[2];
+				BaseParticleData &base_particle_data_i = base_particle_data[num];
+				int i = (int)base_particle_data_i.cell_location_[0];
+				int j = (int)base_particle_data_i.cell_location_[1];
+				int k = (int)base_particle_data_i.cell_location_[2];
 
 				StdVec<ReferenceNeighboringParticle> &reference_neighbor_list = reference_inner_configuration[num];
 				size_t current_number_of_neighbors = reference_neighbor_list.size();
@@ -141,7 +143,7 @@ namespace SPH {
 							for (size_t n = 0; n != target_particles.size(); ++n)
 							{
 								//displacement pointing from neighboring particle to origin particle
-								Vecd displacement = base_particle_data[num].pos_n_ - target_particles[n].second;
+								Vecd displacement = base_particle_data_i.pos_n_ - target_particles[n].second;
 								if (displacement.norm() <= cutoff_radius_ && num != target_particles[n].first)
 								{
 									count_of_neigbors >= current_number_of_neighbors ?
@@ -163,7 +165,7 @@ namespace SPH {
 	//===============================================================//
 	void MeshCellLinkedList::UpdateContactConfiguration(SPHBody &body)
 	{
-		StdVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
+		StdLargeVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
 		ContactNeighborList  current_contact_configuration = body.current_contact_configuration_;
 		ContactParticleList indexes_contact_particles = body.indexes_contact_particles_;
 		StdVec<SPHBody*> contact_bodies = body.contact_map_.second;
@@ -234,7 +236,7 @@ namespace SPH {
 	void MeshCellLinkedList
 		::BuildReferenceContactConfiguration(SPHBody &body)
 	{
-		StdVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
+		StdLargeVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
 		ReferenceContactNeighborList  reference_contact_configuration = body.reference_contact_configuration_;
 		ContactParticleList indexes_contact_particles = body.indexes_contact_particles_;
 		StdVec<SPHBody*> contact_bodies = body.contact_map_.second;
@@ -305,7 +307,7 @@ namespace SPH {
 	void MeshCellLinkedList::UpdateInteractionConfiguration(SPHBody &body,
 		SPHBodyVector interacting_bodies)
 	{
-		StdVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
+		StdLargeVec<BaseParticleData> &base_particle_data = body.base_particles_->base_particle_data_;
 		ContactNeighborList  current_contact_configuration = body.current_contact_configuration_;
 		ContactParticleList indexes_contact_particles = body.indexes_contact_particles_;
 		StdVec<SPHBody*> contact_bodies = body.contact_map_.second;

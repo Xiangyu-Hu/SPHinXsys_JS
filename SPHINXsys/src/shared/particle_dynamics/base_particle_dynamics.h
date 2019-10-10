@@ -31,31 +31,31 @@ namespace SPH
 	using ReduceFunctor = std::function<ReturnType(size_t, Real)>;
 
 	/** Iterators for inner functors. sequential computing. */
-	void InnerIterator(size_t number_of_particles, InnerFunctor &inner_functor, Real dt = 0.0);
+	void InnerIterator(size_t number_of_particles, InnerFunctor inner_functor, Real dt = 0.0);
 	/** Iterators for inner functors. parallel computing. */
-	void InnerIterator_parallel(size_t number_of_particles, InnerFunctor &inner_functor, Real dt = 0.0);
+	void InnerIterator_parallel(size_t number_of_particles, InnerFunctor inner_functor, Real dt = 0.0);
 	/** Iterators for contact functors. sequential computing. */
 	void ContactIterator(StdVec<ListIndexVector*> indexes_interacting_particles, 
-		ContactFunctor &contact_functor, Real dt = 0.0);
+		ContactFunctor contact_functor, Real dt = 0.0);
 	/** Iterators for contact functors. parallel computing. */
 	void ContactIterator_parallel(StdVec<ListIndexVector*> indexes_interacting_particles, 
-		ContactFunctor &contact_functor, Real dt = 0.0);
+		ContactFunctor contact_functor, Real dt = 0.0);
 
 	/** Iterators for reduce functors. sequential computing. */
 	template <class ReturnType, typename ReduceOperation>
-	ReturnType ReduceIterator(size_t number_of_particles, ReturnType temp,
-		ReduceFunctor<ReturnType> &reduce_functor, ReduceOperation &ruduce_operation, Real dt = 0.0);
+	ReturnType ReduceIterator(size_t number_of_particles, ReturnType initial_reference,
+		ReduceFunctor<ReturnType> reduce_functor, ReduceOperation ruduce_operation, Real dt = 0.0);
 	/** Iterators for reduce functors. parallel computing. */
 	template <class ReturnType, class ReduceFunction, typename ReduceOperation>
-	ReturnType ReduceIterator_parallel(size_t number_of_particles, ReturnType temp,
-		ReduceFunctor<ReturnType> &reduce_functor, ReduceOperation &ruduce_operation, Real dt = 0.0);
+	ReturnType ReduceIterator_parallel(size_t number_of_particles, ReturnType initial_reference,
+		ReduceFunctor<ReturnType> reduce_functor, ReduceOperation ruduce_operation, Real dt = 0.0);
 
 	/** Iterators for inner functors with splitting. sequential computing. */
 	void InnerIteratorSplitting(ByCellLists by_cell_lists_particle_indexes, 
-		InnerFunctor &inner_functor, Real dt = 0.0);
+		InnerFunctor inner_functor, Real dt = 0.0);
 	/** Iterators for inner functors with splitting. parallel computing. */
 	void InnerIteratorSplitting_parallel(ByCellLists by_cell_lists_particle_indexes, 
-		InnerFunctor &inner_functor, Real dt = 0.0);
+		InnerFunctor inner_functor, Real dt = 0.0);
 
 	/** A Functor for Summation */
 	template <class ReturnType>
@@ -209,16 +209,12 @@ namespace SPH
 	class ParticleDynamicsSimple : public ParticleDynamics<void, BodyType, ParticlesType, MaterialType>
 	{
 	protected:
-		size_t number_of_particles_;
-
 		virtual void Update(size_t index_particle_i, Real dt = 0.0) = 0;
 		InnerFunctor functor_update_;
 		public:
 		explicit ParticleDynamicsSimple(BodyType* body)
 			: ParticleDynamics<void, BodyType, ParticlesType, MaterialType>(body), 
-			functor_update_(std::bind(&ParticleDynamicsSimple::Update, this, _1, _2)){
-			number_of_particles_ = body->number_of_particles_;
-		};
+			functor_update_(std::bind(&ParticleDynamicsSimple::Update, this, _1, _2)) {};
 		virtual ~ParticleDynamicsSimple() {};
 
 		virtual void exec(Real dt = 0.0) override;
@@ -234,7 +230,6 @@ namespace SPH
 	{
 	protected:
 		ReduceOperation reduce_operation_;
-		size_t number_of_particles_;
 
 		//inital or refence value
 		ReturnType initial_reference_;
@@ -244,9 +239,7 @@ namespace SPH
 		ReduceFunctor<ReturnType> functor_reduce_function_;
 	public:
 		explicit ParticleDynamicsReduce(BodyType* body) : ParticleDynamics<ReturnType, BodyType, ParticlesType, MaterialType>(body), 
-			functor_reduce_function_(std::bind(&ParticleDynamicsReduce::ReduceFunction, this, _1, _2)) {
-			number_of_particles_ = body->number_of_particles_;
-		};
+			functor_reduce_function_(std::bind(&ParticleDynamicsReduce::ReduceFunction, this, _1, _2)) {};
 		virtual ~ParticleDynamicsReduce() {};
 	
 		virtual ReturnType exec(Real dt = 0.0) override;
@@ -263,16 +256,12 @@ namespace SPH
 	class ParticleDynamicsInner : public ParticleDynamicsWithInnerConfigurations<BodyType, ParticlesType, MaterialType>
 	{
 	protected:
-		size_t number_of_particles_;
-
 		virtual void InnerInteraction(size_t index_particle_i, Real dt = 0.0) = 0;
 		InnerFunctor functor_inner_interaction_;
 	public:
 		explicit ParticleDynamicsInner(BodyType* body) : 
 			ParticleDynamicsWithInnerConfigurations<BodyType, ParticlesType, MaterialType>(body),
-			functor_inner_interaction_(std::bind(&ParticleDynamicsInner::InnerInteraction, this, _1, _2)) {
-			number_of_particles_ = body->number_of_particles_;
-		};
+			functor_inner_interaction_(std::bind(&ParticleDynamicsInner::InnerInteraction, this, _1, _2)) {};
 		virtual ~ParticleDynamicsInner() {};
 
 		virtual void exec(Real dt = 0.0) override;

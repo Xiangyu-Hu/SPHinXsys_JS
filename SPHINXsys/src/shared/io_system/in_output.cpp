@@ -488,11 +488,11 @@ namespace SPH {
 		}
 	}
 	//===============================================================//
-	WriteSimBodyPinAngle
-		::WriteSimBodyPinAngle(In_Output& in_output, StdVec<SimTK::MobilizedBody::Pin *> mobodies, SimTK::RungeKuttaMersonIntegrator &integ)
+	WriteSimBodyPinAngleAndAngleRate
+		::WriteSimBodyPinAngleAndAngleRate(In_Output& in_output, StdVec<SimTK::MobilizedBody::Pin *> mobodies, SimTK::RungeKuttaMersonIntegrator &integ)
 		: WriteSimBodyStates<SimTK::MobilizedBody::Pin>(in_output, mobodies), integ_(integ)
 	{
-		filefullpath_ = in_output_.output_folder_ + "/simbody_pin_angles_" 
+		filefullpath_ = in_output_.output_folder_ + "/simbody_pin_angles_and_anglerate" 
 					  + in_output_.restart_step_ + ".dat";
 		std::ofstream out_file(filefullpath_.c_str(), ios::app);
 		out_file << "\"run_time\"" << "   ";
@@ -505,12 +505,13 @@ namespace SPH {
 		out_file.close();
 	};
 	//===============================================================//
-	void WriteSimBodyPinAngle::WriteToFile(Real time)
+	void WriteSimBodyPinAngleAndAngleRate::WriteToFile(Real time)
 	{
 		int Itime = int(time * 1.0e4);
 		std::ofstream out_file(filefullpath_.c_str(), ios::app);
 		out_file << time << "   ";
 		const SimTK::State *simbody_state = &integ_.getState();
+		visulizer->report(*simbody_state);
 		for (size_t i = 0; i != mobodies_.size(); ++i)
 		{
 			out_file << "  " << mobodies_[i]->getAngle(*simbody_state) <<"  ";

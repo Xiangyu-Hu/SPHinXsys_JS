@@ -52,6 +52,13 @@ namespace SPH {
 
 		/** vector of fluid particle data. */
 		StdLargeVec<FluidParticleData> fluid_particle_data_; 	
+
+		//----------------------------------------------------------------------
+		//Global data
+		//----------------------------------------------------------------------
+		/** Maximum signal speed.*/
+		Real signal_speed_max_;
+
 		/**
 		 * @brief Write particle data in XML format.
 		 * @param[inout] filefullpath Full path to file being write.

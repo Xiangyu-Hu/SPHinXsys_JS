@@ -6,13 +6,13 @@ namespace SPH
 	Real GlobalStaticVariables::physical_time_ = 0.0;
 
 	//===============================================================//
-	void InnerIterator(size_t number_of_particles, InnerFunctor &inner_functor, Real dt)
+	void InnerIterator(size_t number_of_particles, InnerFunctor inner_functor, Real dt)
 	{
 		for (size_t i = 0; i < number_of_particles; ++i)
 			inner_functor(i, dt);
 	}
 	//===============================================================//
-	void InnerIterator_parallel(size_t number_of_particles, InnerFunctor &inner_functor, Real dt)
+	void InnerIterator_parallel(size_t number_of_particles, InnerFunctor inner_functor, Real dt)
 	{
 		parallel_for(blocked_range<size_t>(0, number_of_particles),
 			[&](const blocked_range<size_t>& r) {
@@ -23,7 +23,7 @@ namespace SPH
 	}
 	//===============================================================//
 	void ContactIterator(StdVec<ListIndexVector*> indexes_interacting_particles,
-		ContactFunctor &contact_functor, Real dt)
+		ContactFunctor contact_functor, Real dt)
 	{
 		for (size_t k = 0; k < indexes_interacting_particles.size(); ++k)
 			for (size_t l = 0; l < (*indexes_interacting_particles[k]).size(); ++l) {
@@ -33,7 +33,7 @@ namespace SPH
 	}
 	//===============================================================//
 	void ContactIterator_parallel(StdVec<ListIndexVector*> indexes_interacting_particles,
-		ContactFunctor &contact_functor, Real dt)
+		ContactFunctor contact_functor, Real dt)
 	{
 		for (size_t k = 0; k < indexes_interacting_particles.size(); ++k)
 			parallel_for(blocked_range<size_t>(0, (*indexes_interacting_particles[k]).size()),
@@ -46,7 +46,7 @@ namespace SPH
 	}
 	//===============================================================//
 	void InnerIteratorSplitting(ByCellLists by_cell_lists_particle_indexes,
-		InnerFunctor &inner_functor, Real dt)
+		InnerFunctor inner_functor, Real dt)
 	{
 		size_t number_of_lists = (*by_cell_lists_particle_indexes).size();
 
@@ -78,7 +78,7 @@ namespace SPH
 	}
 	//===============================================================//
 	void InnerIteratorSplitting_parallel(ByCellLists by_cell_lists_particle_indexes,
-		InnerFunctor &inner_functor, Real dt)
+		InnerFunctor inner_functor, Real dt)
 	{
 		size_t number_of_lists = (*by_cell_lists_particle_indexes).size();
 		//forward sweeping

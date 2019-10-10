@@ -130,31 +130,5 @@ namespace SPH
 			ApplyStimulusCurrents(SolidBody *body);
 			virtual ~ApplyStimulusCurrents() {};
 		};
-		/**
-		 * @class DiffusionInitialization
-		 * @brief  set initial condition for diffusion
-		*/
-		class DiffusionInitialization : public ElectroPhysiologySimple
-		{
-		protected:
-			virtual void Update(size_t index_particle_i, Real dt = 0.0) override;
-		public:
-			DiffusionInitialization(SolidBody *body)
-				: ElectroPhysiologySimple(body) {};
-			virtual ~DiffusionInitialization() {};
-		};
-		/**
-		 * @class Initialization
-		 * @brief  set initial condition for diffusion
-		*/
-		class TransmembranePotentialInitialization : public ElectroPhysiologySimple
-		{
-		protected:
-			virtual void Update(size_t index_particle_i, Real dt = 0.0) override;
-		public:
-			TransmembranePotentialInitialization(SolidBody *body)
-				: ElectroPhysiologySimple(body) {};
-			virtual ~TransmembranePotentialInitialization() {};
-		};
     }
 }

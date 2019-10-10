@@ -28,8 +28,6 @@ namespace SPH {
 			int refinement_level, ParticlesGeneratorOps op);
 		virtual ~FluidBody() {};
 
-		/** Maximum signal speed, total kinetic energy. */
-		Real signal_speed_max_;					
 		/** Build inner configuration. */
 		virtual void BuildInnerConfiguration() override;
 		/** Build contact configuration. */

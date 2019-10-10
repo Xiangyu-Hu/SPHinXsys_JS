@@ -56,9 +56,10 @@ namespace SPH {
 	}
 	//===============================================================//
 	template <class ReturnType, typename ReduceOperation>
-	ReturnType ReduceIterator(size_t number_of_particles, ReturnType temp, 
-		ReduceFunctor<ReturnType> &reduce_functor, ReduceOperation &ruduce_operation, Real dt)
+	ReturnType ReduceIterator(size_t number_of_particles, ReturnType initial_reference,
+		ReduceFunctor<ReturnType> reduce_functor, ReduceOperation ruduce_operation, Real dt)
 	{
+		ReturnType temp = initial_reference;
 		for (size_t i = 0; i < number_of_particles; ++i)
 		{
 			temp = ruduce_operation(temp, reduce_functor(i, dt));
@@ -67,36 +68,37 @@ namespace SPH {
 	}
 	//===============================================================//
 	template <class ReturnType, typename ReduceOperation>
-	ReturnType ReduceIterator_parallel(size_t number_of_particles, ReturnType temp,
-		ReduceFunctor<ReturnType> &reduce_functor, ReduceOperation &ruduce_operation, Real dt)
+	ReturnType ReduceIterator_parallel(size_t number_of_particles, ReturnType initial_reference,
+		ReduceFunctor<ReturnType> reduce_functor, ReduceOperation ruduce_operation, Real dt)
 	{
-		temp = parallel_reduce(blocked_range<size_t>(0, number_of_particles),
-			temp, [&](const blocked_range<size_t>& r, ReturnType temp0)->ReturnType {
+		return parallel_reduce(blocked_range<size_t>(0, number_of_particles),
+			initial_reference, [&](const blocked_range<size_t>& r, ReturnType temp)->ReturnType {
 			for (size_t i = r.begin(); i != r.end(); ++i) {
-				temp0 = ruduce_operation(temp0, reduce_functor(i, dt));
+				temp = ruduce_operation(temp, reduce_functor(i, dt));
 			}
-			return temp0;
+			return temp;
 		},
 			[&](ReturnType x, ReturnType y)->ReturnType {
 			return ruduce_operation(x, y);
 		}
 		);
-		return temp;
 	}
 	//===============================================================//
 	template <class BodyType, class ParticlesType, class MaterialType>
 	void ParticleDynamicsSimple<BodyType, ParticlesType, MaterialType>::exec(Real dt)
 	{
+		size_t number_of_particles = this->body_->number_of_particles_;
 		this->SetupDynamics(dt);
-		InnerIterator(number_of_particles_, functor_update_, dt);
+		InnerIterator(number_of_particles, functor_update_, dt);
 	}
 	//===============================================================//
 	template <class BodyType, class ParticlesType, class MaterialType>
 	void ParticleDynamicsSimple<BodyType, ParticlesType, MaterialType>
 		::parallel_exec(Real dt)
 	{
+		size_t number_of_particles = this->body_->number_of_particles_;
 		this->SetupDynamics(dt);
-		InnerIterator_parallel(number_of_particles_, functor_update_, dt);
+		InnerIterator_parallel(number_of_particles, functor_update_, dt);
 	}
 	//===============================================================//
 	template <class ReturnType, class ReduceOperation, 
@@ -105,11 +107,11 @@ namespace SPH {
 		BodyType, ParticlesType, MaterialType>
 		::exec(Real dt)
 	{
-		ReturnType temp = initial_reference_;
+		size_t number_of_particles = this->body_->number_of_particles_;
 		this->SetupReduce();
-		temp = ReduceIterator(number_of_particles_, 
-			temp, functor_reduce_function_, reduce_operation_, dt);
-		return this->OutputResult(temp);
+		ReturnType reduced_value = ReduceIterator(number_of_particles,
+			initial_reference_, functor_reduce_function_, reduce_operation_, dt);
+		return this->OutputResult(reduced_value);
 	}	
 	//===============================================================//
 	template <class ReturnType, typename ReduceOperation,
@@ -118,25 +120,27 @@ namespace SPH {
 		BodyType, ParticlesType, MaterialType>
 		::parallel_exec(Real dt)
 	{
-		ReturnType temp = initial_reference_;
+		size_t number_of_particles = this->body_->number_of_particles_;
 		this->SetupReduce();
-		temp = ReduceIterator_parallel(number_of_particles_, 
-			temp, functor_reduce_function_, reduce_operation_, dt);
-		return this->OutputResult(temp);
+		ReturnType reduced_value = ReduceIterator_parallel(number_of_particles,
+			initial_reference_, functor_reduce_function_, reduce_operation_, dt);
+		return this->OutputResult(reduced_value);
 	}
 	//===============================================================//
 	template <class BodyType, class ParticlesType, class MaterialType>
 	void ParticleDynamicsInner<BodyType, ParticlesType, MaterialType>::exec(Real dt)
 	{
+		size_t number_of_particles = this->body_->number_of_particles_;
 		this->SetupDynamics(dt);
-		InnerIterator(number_of_particles_, functor_inner_interaction_, dt);
+		InnerIterator(number_of_particles, functor_inner_interaction_, dt);
 	}
 	//===============================================================//
 	template <class BodyType, class ParticlesType, class MaterialType>
 	void ParticleDynamicsInner<BodyType, ParticlesType, MaterialType>::parallel_exec(Real dt)
 	{
+		size_t number_of_particles = this->body_->number_of_particles_;
 		this->SetupDynamics(dt);
-		InnerIterator_parallel(number_of_particles_, functor_inner_interaction_, dt);
+		InnerIterator_parallel(number_of_particles, functor_inner_interaction_, dt);
 	}
 	//===================================================================//
 	template <class BodyType, class ParticlesType, class MaterialType>

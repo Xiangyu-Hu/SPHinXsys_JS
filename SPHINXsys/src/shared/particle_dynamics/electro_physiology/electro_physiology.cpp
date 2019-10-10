@@ -55,42 +55,6 @@ namespace SPH
 		    muscle_particle_data_i.dvoltage_dt_ = 0.0;
 		    muscle_particle_data_i.grad_voltage_ = 0.0;
 		    muscle_particle_data_i.gate_var_ = 0.0;
-            if(0.45 <= base_particle_data_i.pos_n_[0] && base_particle_data_i.pos_n_[0] <= 0.55)
-			{
-				muscle_particle_data_i.voltage_n_ = 1.0;
-			}
-			if(base_particle_data_i.pos_n_[0] >= 1.0)
-			{
-				muscle_particle_data_i.voltage_n_ = exp(-2500 * ((base_particle_data_i.pos_n_[0] - 1.5) 
-					* (base_particle_data_i.pos_n_[0] - 1.5)));
-			}
-		}
-//=================================================================================================//
-		void DiffusionInitialization::Update(size_t index_particle_i, Real dt)
-		{
-			BaseParticleData &base_particle_data_i = particles_->base_particle_data_[index_particle_i];
-            MuscleParticleData &muscle_particle_data_i = particles_->muscle_body_data_[index_particle_i];
-
-            if(0.45 <= base_particle_data_i.pos_n_[0] && base_particle_data_i.pos_n_[0] <= 0.55)
-			{
-				muscle_particle_data_i.voltage_n_ = 1.0;
-			}
-			if(base_particle_data_i.pos_n_[0] >= 1.0)
-			{
-				muscle_particle_data_i.voltage_n_ = exp(-2500 * ((base_particle_data_i.pos_n_[0] - 1.5) 
-					* (base_particle_data_i.pos_n_[0] - 1.5)));
-			}
-		}
-//=================================================================================================//
-		void TransmembranePotentialInitialization::Update(size_t index_particle_i, Real dt)
-		{
-			BaseParticleData &base_particle_data_i = particles_->base_particle_data_[index_particle_i];
-            MuscleParticleData &muscle_particle_data_i = particles_->muscle_body_data_[index_particle_i];
-
-            muscle_particle_data_i.voltage_n_ = exp(-4.0 * ((base_particle_data_i.pos_n_[0] - 1.0) 
-				* (base_particle_data_i.pos_n_[0] - 1.0) + base_particle_data_i.pos_n_[1] * 
-				base_particle_data_i.pos_n_[1]));
-
 		}
 //=================================================================================================//
 		getDiffusionTimeStepSize::getDiffusionTimeStepSize(SolidBody* body)

@@ -93,13 +93,14 @@ namespace SPH {
 		//----------------------------------------------------------------------
 		//Global variables
 		//----------------------------------------------------------------------
-		Real speed_max_;							/**< Maxium particle speed. */
 		Real particle_spacing_;						/**< Particle spacing of the body. */
 		size_t number_of_particles_;				/**< Number of real particles of the body. */
 		Particles *base_particles_;					/**< Base particles of this body. */
 		Material *base_material_;					/**< Base material of this body. */
 		Reaction *base_reaction_;					/**< Base reaction model of this body */
 		MeshCellLinkedList *mesh_cell_linked_list_; /**< Cell linked mesh of this body. */
+		MeshBackground *mesh_background_;			/**< Background mesh.*/
+
 		/**
  		 * @brief particle by cells lists is for parallel splitting algorithm
 		 * particles in each cell are collected together, 

@@ -1,4 +1,6 @@
 #include "solid_particles.h"
+#include "base_body.h"
+
 #include <iterator>
 
 using namespace std;
@@ -12,7 +14,7 @@ namespace SPH {
 		std::vector<Vecd>::const_iterator vector_iterater;
 		std::vector<int>::const_iterator int_iterater;
 
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 		output_file << "  <Piece Name =\"" <<  body_name_ << "\" NumberOfPoints=\"" << number_of_particles << "\" NumberOfCells=\"0\">\n";
 
 		//write coordinates of particles
@@ -62,7 +64,7 @@ namespace SPH {
 	{
 		output_file << " VARIABLES = \" x \", \"y\",\"z\", \"ID\", \"x_norm\", \"y_norm\", \"z_norm\" \n";
 
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 		for (size_t i = 0; i != number_of_particles; ++i)
 		{
 			output_file << base_particle_data_[i].pos_n_[0] << "  "
@@ -115,7 +117,7 @@ namespace SPH {
 		std::vector<Vecd>::const_iterator vector_iterater;
 		std::vector<int>::const_iterator int_iterater;
 
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 		output_file << "  <Piece Name =\"" << body_name_ << "\" NumberOfPoints=\"" << number_of_particles << "\" NumberOfCells=\"0\">\n";
 
 		//write coordinates of particles
@@ -191,7 +193,7 @@ namespace SPH {
 	{
 		output_file << " VARIABLES = \" x \", \"y\",\"z\", \"u\", \"v\", \"w\", \"ID\", \"x_norm\", \"y_norm\", \"z_norm\" \n";
 
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 		for (size_t i = 0; i != number_of_particles; ++i)
 		{
 			output_file << base_particle_data_[i].pos_n_[0] << "  "
@@ -225,7 +227,7 @@ namespace SPH {
 		std::vector<Real>::const_iterator scalar_iterater;
 		std::vector<Vecd>::const_iterator vector_iterater;
 		std::vector<int>::const_iterator int_iterater;
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 
 		output_file << "  <Piece Name =\"" << body_name_ << "\" NumberOfPoints=\"" << number_of_particles << "\" NumberOfCells=\"0\">\n";
 
@@ -274,7 +276,7 @@ namespace SPH {
 //=================================================================================================//
 	void MuscleParticles::WriteParticlesToPltFile(ofstream &output_file)
 	{
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 		output_file << " VARIABLES = \" x \", \"y\",\"z\", \"ID\", \"Voltage\" \n";
 		for (size_t i = 0; i != number_of_particles; ++i)
 		{

@@ -1,4 +1,5 @@
 #include "solid_particles.h"
+#include "base_body.h"
 
 using namespace std;
 
@@ -6,7 +7,7 @@ namespace SPH {
 //=================================================================================================//
 	void SolidParticles::WriteParticlesToVtuFile(ofstream &output_file)
 	{
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 		output_file << "  <Piece Name =\"" <<  body_name_ << "\" NumberOfPoints=\"" << number_of_particles << "\" NumberOfCells=\"0\">\n";
 
 		//write coordinates of particles
@@ -56,7 +57,7 @@ namespace SPH {
 	void SolidParticles::WriteParticlesToPltFile(ofstream &output_file)
 	{
 		output_file << " VARIABLES = \" x \", \"y\", \"ID\", \"x_norm\", \"y_norm\" \n";
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 		for (size_t i = 0; i != number_of_particles; ++i)
 		{
 			output_file << base_particle_data_[i].pos_n_[0] << "  "
@@ -71,8 +72,8 @@ namespace SPH {
 	{
 		XmlEngine* restart_xml = new XmlEngine("particles_xml", "particles");
 
-		size_t number_of_particles = base_particle_data_.size();
-  		for(size_t i = 0; i != number_of_particles; ++i)
+		size_t number_of_particles = body_->number_of_particles_;
+		for(size_t i = 0; i != number_of_particles; ++i)
   		{
   			restart_xml->CreatXmlElement("particle");
     		restart_xml->AddAttributeToElement("ID",base_particle_data_[i].particle_ID_);
@@ -107,7 +108,7 @@ namespace SPH {
 //=================================================================================================//
 	void ElasticSolidParticles::WriteParticlesToVtuFile(ofstream &output_file)
 	{
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 		output_file << "  <Piece Name =\"" << body_name_ << "\" NumberOfPoints=\"" << number_of_particles << "\" NumberOfCells=\"0\">\n";
 
 		//write coordinates of particles
@@ -182,7 +183,7 @@ namespace SPH {
 	void ElasticSolidParticles::WriteParticlesToPltFile(ofstream &output_file)
 	{
 		output_file << " VARIABLES = \" x \", \"y\", \"ID\", \"x_norm\", \"y_norm\", \"von Mises stress\" \n";
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 
 		for (size_t i = 0; i != number_of_particles; ++i)
 		{
@@ -199,7 +200,7 @@ namespace SPH {
 	{
 		XmlEngine* restart_xml = new XmlEngine("particles_xml", "particles");
 		
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 		for(size_t i = 0; i != number_of_particles; ++i)
   		{
   			restart_xml->CreatXmlElement("particle");
@@ -241,7 +242,7 @@ namespace SPH {
 //=================================================================================================//
 	void MuscleParticles::WriteParticlesToVtuFile(ofstream &output_file)
 	{
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 		output_file << "  <Piece Name =\"" << body_name_ << "\" NumberOfPoints=\"" << number_of_particles << "\" NumberOfCells=\"0\">\n";
 
 		//write coordinates of particles
@@ -298,7 +299,7 @@ namespace SPH {
 //=================================================================================================//
 	void MuscleParticles::WriteParticlesToPltFile(ofstream &output_file)
 	{
-		size_t number_of_particles = base_particle_data_.size();
+		size_t number_of_particles = body_->number_of_particles_;
 		/*
 		output_file << " VARIABLES = \" x \", \"y\", \"ID\",\"Volume\", \" Voltage \" \n";
 		for (size_t i = 0; i != number_of_particles; ++i)
