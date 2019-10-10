@@ -5,7 +5,6 @@
  * @version	0.1
  */
 #include "fluid_particles.h"
-#include "base_body.h"
 
 namespace SPH
 {

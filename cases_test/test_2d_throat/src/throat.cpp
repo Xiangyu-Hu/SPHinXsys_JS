@@ -22,6 +22,10 @@ Real k_f = 0.0;
 Real mu_p_f = 0.6*mu_f;
 Real lambda_f = 10.0;
 
+//for fluid initial condition
+Real initial_pressure = 0.0;
+Vec2d intial_velocity(0.0, 0.0);
+
 //define the fluid body
 class FluidBlock : public FluidBody
 {

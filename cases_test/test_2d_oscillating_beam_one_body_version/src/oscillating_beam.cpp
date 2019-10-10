@@ -32,7 +32,9 @@ Real rho0_s = 1.0e3; 			//reference density
 Real Youngs_modulus = 2.0e6;	//reference Youngs modulus
 Real poisson = 0.3975; 			//Poisson ratio
 
-//for initial condition on velocity
+//for initial condition
+Real initial_pressure = 0.0;
+//for initial velocity
 Real kl = 1.875;
 Real M = sin(kl) + sinh(kl);
 Real N = cos(kl) + cosh(kl);

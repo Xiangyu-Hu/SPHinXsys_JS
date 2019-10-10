@@ -435,6 +435,7 @@ namespace SPH {
 		ReadRestart(In_Output& in_output, SPHBodyVector bodies)
 			: RestartIO(in_output, bodies), ReadBodyStates(in_output, bodies) {};
 		virtual ~ReadRestart() {};
+
 		virtual Real ReadRestartFiles(size_t restart_step) {
 			ReadFromFile(restart_step);
 			return ReadRestartTime(restart_step);
@@ -446,15 +447,14 @@ namespace SPH {
 	 * @class WriteTotalForceOnSolid
 	* @brief Write total force acting a solid body.
 	*/
-	class WriteSimBodyPinAngleAndAngleRate : public WriteSimBodyStates<SimTK::MobilizedBody::Pin>
+	class WriteSimBodyPinAngle : public WriteSimBodyStates<SimTK::MobilizedBody::Pin>
 	{
 	protected:
 		SimTK::RungeKuttaMersonIntegrator &integ_;
 		std::string filefullpath_;
-		SimTK::Visualizer *visulizer;
 	public:
-		WriteSimBodyPinAngleAndAngleRate(In_Output& in_output, StdVec<SimTK::MobilizedBody::Pin*> mobodies, SimTK::RungeKuttaMersonIntegrator &integ);
-		virtual ~WriteSimBodyPinAngleAndAngleRate() {};
+		WriteSimBodyPinAngle(In_Output& in_output, StdVec<SimTK::MobilizedBody::Pin*> mobodies, SimTK::RungeKuttaMersonIntegrator &integ);
+		virtual ~WriteSimBodyPinAngle() {};
 		virtual void WriteToFile(Real time = 0.0) override;
 	};
 }

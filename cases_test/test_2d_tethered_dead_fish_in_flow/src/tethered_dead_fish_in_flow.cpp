@@ -36,6 +36,8 @@ Real c_f = 10.0*U_f;
 Real Re = 5.0e3;
 Real mu_f = rho0_f * U_f * (fish_length) / Re;
 Real k_f = 0.0;
+Real initial_pressure = 0.0;
+Vec2d intial_velocity(0.0, 0.0);
 /**
 * Material properties of the fish body.
 */

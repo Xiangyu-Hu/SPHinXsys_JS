@@ -209,12 +209,16 @@ namespace SPH
 	class ParticleDynamicsSimple : public ParticleDynamics<void, BodyType, ParticlesType, MaterialType>
 	{
 	protected:
+		size_t number_of_particles_;
+
 		virtual void Update(size_t index_particle_i, Real dt = 0.0) = 0;
 		InnerFunctor functor_update_;
 		public:
 		explicit ParticleDynamicsSimple(BodyType* body)
 			: ParticleDynamics<void, BodyType, ParticlesType, MaterialType>(body), 
-			functor_update_(std::bind(&ParticleDynamicsSimple::Update, this, _1, _2)) {};
+			functor_update_(std::bind(&ParticleDynamicsSimple::Update, this, _1, _2)){
+			number_of_particles_ = body->number_of_particles_;
+		};
 		virtual ~ParticleDynamicsSimple() {};
 
 		virtual void exec(Real dt = 0.0) override;
@@ -230,6 +234,7 @@ namespace SPH
 	{
 	protected:
 		ReduceOperation reduce_operation_;
+		size_t number_of_particles_;
 
 		//inital or refence value
 		ReturnType initial_reference_;
@@ -239,7 +244,9 @@ namespace SPH
 		ReduceFunctor<ReturnType> functor_reduce_function_;
 	public:
 		explicit ParticleDynamicsReduce(BodyType* body) : ParticleDynamics<ReturnType, BodyType, ParticlesType, MaterialType>(body), 
-			functor_reduce_function_(std::bind(&ParticleDynamicsReduce::ReduceFunction, this, _1, _2)) {};
+			functor_reduce_function_(std::bind(&ParticleDynamicsReduce::ReduceFunction, this, _1, _2)) {
+			number_of_particles_ = body->number_of_particles_;
+		};
 		virtual ~ParticleDynamicsReduce() {};
 	
 		virtual ReturnType exec(Real dt = 0.0) override;
@@ -256,12 +263,16 @@ namespace SPH
 	class ParticleDynamicsInner : public ParticleDynamicsWithInnerConfigurations<BodyType, ParticlesType, MaterialType>
 	{
 	protected:
+		size_t number_of_particles_;
+
 		virtual void InnerInteraction(size_t index_particle_i, Real dt = 0.0) = 0;
 		InnerFunctor functor_inner_interaction_;
 	public:
 		explicit ParticleDynamicsInner(BodyType* body) : 
 			ParticleDynamicsWithInnerConfigurations<BodyType, ParticlesType, MaterialType>(body),
-			functor_inner_interaction_(std::bind(&ParticleDynamicsInner::InnerInteraction, this, _1, _2)) {};
+			functor_inner_interaction_(std::bind(&ParticleDynamicsInner::InnerInteraction, this, _1, _2)) {
+			number_of_particles_ = body->number_of_particles_;
+		};
 		virtual ~ParticleDynamicsInner() {};
 
 		virtual void exec(Real dt = 0.0) override;

@@ -30,22 +30,22 @@ namespace SPH {
 		::RiemannSolverForVelocity(Real rhol, Real rhor, Real pl, 
 			Real pr, Real ul, Real ur)
 	{
-		Real rhol_cl = GetSoundSpeed(pl, rhol) * rhol;
-		Real rhor_cr = GetSoundSpeed(pr, rhor) * rhor;
+		Real cl = GetSoundSpeed(pl, rhol);
+		Real cr = GetSoundSpeed(pr, rhor);
 
-		return (rhol_cl * ul + rhor_cr * ur + pl - pr) / (rhol_cl + rhor_cr);
+		return (rhol*ul*cl + rhor*ur*cr + pl - pr) / (rhol*cl + rhor*cr);
 	}
 	//===============================================================//
 	Real WeaklyCompressibleFluid
 		::RiemannSolverForPressure(Real rhol, Real rhor, Real pl, 
 			Real pr, Real ul, Real ur)
 	{
-		Real rhol_cl = GetSoundSpeed(pl, rhol)*rhol;
-		Real rhor_cr = GetSoundSpeed(pr, rhor)*rhor;
-		Real clr =(rhol_cl + rhor_cr)/ (rhol + rhor);
+		Real cl = GetSoundSpeed(pl, rhol);
+		Real cr = GetSoundSpeed(pr, rhor);
+		Real clr =(rhol*cl + rhor*cr)/ (rhol + rhor);
 
-		return (rhol_cl * pr + rhor_cr * pl + rhol_cl * rhor_cr * (ul - ur)
-			*SMIN(3.0*SMAX((ul - ur) / clr, 0.0), 1.0)) / (rhol_cl + rhor_cr);
+		return (rhol*cl*pr + rhor*cr*pl + rhol*cl*rhor*cr*(ul - ur)
+			*SMIN(3.0*SMAX((ul - ur) / clr, 0.0), 1.0)) / (rhol*cl + rhor*cr);
 	}
 	//===============================================================//
 	SymmetricTaitFluid

@@ -14,17 +14,16 @@ using namespace SPH;
 /** Geometry parameter. */
 Real L = 2.0; 	
 Real H = 0.4;
-/** Particle spacing. */
+/** Particle spacing and boudary dummy particles. */
 Real particle_spacing_ref = H / 40.0;
-/** Thickness of the surounding boundary. */
-Real BW = 4.0 * particle_spacing_ref;
+Real BW = 0.0;
 /** Material properties. */
 Real rho_0 = 1.0; 	
 Real a_0[4] = {1.0, 0.0, 0.0, 0.0};
 Real b_0[4] = {1.0, 0.0, 0.0, 0.0};
 Vec2d d_0(1.0e-4, 0.0);
 /**
-* @brief create a block shape
+* @brief create a water block shape
 */
 std::vector<Point> CreatShape()
 {
@@ -50,35 +49,7 @@ public:
 		body_region_.done_modeling();
 	}
 };
- /**
- * application dependent initial condition 
- */
-class DiffusionInitialCondition
-	: public electro_physiology::ElectroPhysiologyInitialCondition
-{
-public:
-	DiffusionInitialCondition(SolidBody *diffusion)
-		: electro_physiology::ElectroPhysiologyInitialCondition(diffusion) {};
-protected:
-	void Update(size_t index_particle_i, Real dt) override 
-	{
-		/** first set all particle at rest*/
-		electro_physiology::ElectroPhysiologyInitialCondition::Update(index_particle_i, dt);
 
-		BaseParticleData &base_particle_data_i = particles_->base_particle_data_[index_particle_i];
-		MuscleParticleData &muscle_particle_data_i = particles_->muscle_body_data_[index_particle_i];
-
-        if(0.45 <= base_particle_data_i.pos_n_[0] && base_particle_data_i.pos_n_[0] <= 0.55)
-		{
-			muscle_particle_data_i.voltage_n_ = 1.0;
-		}
-		if(base_particle_data_i.pos_n_[0] >= 1.0)
-		{
-			muscle_particle_data_i.voltage_n_ = exp(-2500 * ((base_particle_data_i.pos_n_[0] - 1.5) 
-					* (base_particle_data_i.pos_n_[0] - 1.5)));
-		}
-	};
-};
 /** The main program. */
 int main()
 {
@@ -87,8 +58,8 @@ int main()
 	GlobalStaticVariables::physical_time_ = 0.0;
 	/** Configuration of materials, crate particle container and diffusion body. */
 	DiffusionBody *diffusion_body  =  new DiffusionBody(system, "DiffusionBody", 0, ParticlesGeneratorOps::lattice);
-	Muscle 						material("Muscle", diffusion_body, a_0, b_0,d_0, rho_0, 1.0);
 	MuscleParticles 			particles(diffusion_body);
+	Muscle 						material("Muscle", diffusion_body, a_0, b_0,d_0, rho_0, 1.0);
 	/** Set body contact map. */
 	SPHBodyTopology body_topology = { { diffusion_body, {  } }};
 	system.SetBodyTopology(&body_topology);
@@ -99,8 +70,8 @@ int main()
 	/**
 	 * The main dynamics algorithm is defined start here.
 	 */
-	/** Case setup */
-	DiffusionInitialCondition setup_diffusion_initial_condition(diffusion_body);
+	/** Corrected strong configuration for diffusion body. */	
+	electro_physiology::ElectroPhysiologyInitialCondition 	initialization(diffusion_body);
 	/** Corrected strong configuration for diffusion body. */	
 	electro_physiology::CorrectConfiguration 				correct_configuration(diffusion_body);
 	/** Time step size caclutation. */
@@ -113,7 +84,7 @@ int main()
 	In_Output 							in_output(system);
 	WriteBodyStatesToPlt 				write_states(in_output, system.real_bodies_);
 	/** Pre-simultion*/
-	setup_diffusion_initial_condition.exec();
+	initialization.parallel_exec();
 	correct_configuration.parallel_exec();
 	/** Output global basic parameters. */
 	write_states.WriteToFile(GlobalStaticVariables::physical_time_);

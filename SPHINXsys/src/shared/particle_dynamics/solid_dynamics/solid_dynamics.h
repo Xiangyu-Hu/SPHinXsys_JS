@@ -552,19 +552,5 @@ namespace SPH
 			DampingBySplittingAlgorithm(SolidBody *elastic_body, Real eta);
 			virtual ~DampingBySplittingAlgorithm() {};
 		};
-		/**
-		 * @class TwistingInitialCondition
-		 * @brief  set initial condition for twisting cantilever
-		*/
-		class TwistingInitialCondition : public SolidDynamicsSimple
-		{
-		protected:
-			//default for set all particle at rest
-			virtual void Update(size_t index_particle_i, Real dt = 0.0) override;
-		public:
-			TwistingInitialCondition(SolidBody *body)
-				: SolidDynamicsSimple(body) {};
-			virtual ~TwistingInitialCondition() {};
-		};
 	}
 }

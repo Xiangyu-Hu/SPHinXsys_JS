@@ -56,6 +56,11 @@ Real c_f = 10.0*U_f;
 Real mu_f = 0.0;
 Real k_f = 0.0;
 
+//for fluid initial condition
+Real initial_pressure = 0.0;
+Vec2d intial_velocity(0.0, 0.0);
+
+
 //for material properties of the solid
 Real rho0_s = 1100.0; //reference density
 Real poisson = 0.47; //Poisson ratio

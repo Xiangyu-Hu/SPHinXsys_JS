@@ -11,8 +11,7 @@
 #include "tbb/tick_count.h"
 #include "tbb/scalable_allocator.h"
 #include "tbb/concurrent_unordered_set.h"
-#include "tbb/concurrent_vector.h"
-#include "tbb/cache_aligned_allocator.h"
+#include <tbb/concurrent_vector.h>
 
 using namespace tbb;
 static tbb::affinity_partitioner ap;
@@ -27,7 +26,7 @@ namespace SPH {
 	using LargeVec = tbb::concurrent_vector<T>;
 
 	template <typename T>
-	using StdLargeVec = std::vector<T, cache_aligned_allocator<T>>;
+	using StdLargeVec = std::vector<T>;
 
 	template <typename T>
 	using StdVec = std::vector<T>;

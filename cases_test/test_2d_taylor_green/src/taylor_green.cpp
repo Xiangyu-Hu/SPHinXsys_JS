@@ -20,7 +20,7 @@ using namespace SPH;
 Real DL = 1.0; 						/**< Tank length. */
 Real DH = 1.0; 						/**< Tank height. */
 
-Real particle_spacing_ref = 1.0/100; 		/**< Initial reference particle spacing. */
+Real particle_spacing_ref = 1.0/50; 		/**< Initial reference particle spacing. */
 Real BW = 4.0 * particle_spacing_ref;
 /**
  * @brief Material properties of the fluid.
@@ -33,6 +33,8 @@ Real Re = 100;
 Real mu_f = rho0_f * U_f * DL / Re;		/**< Dynamics visocisty. */
 Real k_f = 0.0;
 
+Real initial_pressure = 0.0;			/**< Initial pressure field. */
+Vec2d intial_velocity(0.0, 0.0);		/**< Initial velocity field. */
 /**
  * @brief 	Fluid body definition.
  */
@@ -56,31 +58,7 @@ public:
 		body_region_.done_modeling();
 	}
 };
- /**
- * application dependent initial condition 
- */
-class TaylorGreenInitialCondition
-	: public fluid_dynamics::WeaklyCompressibleFluidInitialCondition
-{
-public:
-	TaylorGreenInitialCondition(FluidBody *water)
-		: fluid_dynamics::WeaklyCompressibleFluidInitialCondition(water) {};
-protected:
-	void Update(size_t index_particle_i, Real dt) override 
-	{
-		/** first set all particle at rest*/
-		fluid_dynamics::WeaklyCompressibleFluidInitialCondition::Update(index_particle_i, dt);
 
-		/** initial velocity profile */
-		BaseParticleData &base_particle_data_i = particles_->base_particle_data_[index_particle_i];
-		FluidParticleData &fluid_data_i = particles_->fluid_particle_data_[index_particle_i];
-
-		base_particle_data_i.vel_n_[0] = -cos(2.0 * pi * base_particle_data_i.pos_n_[0]) * 
-				sin(2.0 * pi * base_particle_data_i.pos_n_[1]);
-		base_particle_data_i.vel_n_[1] = sin(2.0 * pi * base_particle_data_i.pos_n_[0]) * 
-				cos(2.0 * pi * base_particle_data_i.pos_n_[1]);
-	};
-};
 /**
  * @brief 	Main program starts here.
  */
@@ -121,10 +99,12 @@ int main()
 	  * @brief 	Methods used only once.
 	  */
 
+	/** initial condition for fluid body */
+	fluid_dynamics::WeaklyCompressibleFluidInitialCondition set_all_fluid_particles_at_rest(water_block);
 	/** Obtain the initial number density of fluid. */
 	fluid_dynamics::InitialNumberDensity 		fluid_initial_number_density(water_block, { });
 	/** Reset velocity field */
-	TaylorGreenInitialCondition setup_taylor_green_velocity(water_block);
+	fluid_dynamics::ResetFluidCondition reset_velocity_filed(water_block);
 	/**
 	 * @brief 	Methods used for time stepping.
 	 */
@@ -140,7 +120,7 @@ int main()
 	/**
 	 * @brief 	Algorithms of fluid dynamics.
 	 */
-	 /** Evaluation of density by summation approach. */
+	 /** Wvaluation of density by summation approach. */
 	fluid_dynamics::DensityBySummation 			update_fluid_desnity(water_block, { });
 	/** Time step size without considering sound wave speed. */
 	fluid_dynamics::GetAdvectionTimeStepSize 	get_fluid_adevction_time_step_size(water_block, U_f);
@@ -175,7 +155,8 @@ int main()
 	/**
 	 * @brief Setup goematrics and initial conditions
 	 */
-	setup_taylor_green_velocity.exec();
+	set_all_fluid_particles_at_rest.exec();
+	reset_velocity_filed.exec();
 	periodic_condition_x.parallel_exec();
 	periodic_condition_y.parallel_exec();
 	update_particle_configuration.parallel_exec();

@@ -12,7 +12,7 @@
 using namespace SPH;
 
 //for geometry
-Real particle_spacing_ref = 0.05; //particle spacing
+Real particle_spacing_ref = 0.0125; //particle spacing
 Real BW = particle_spacing_ref * 4; //boundary width
 
 Real DL = 5.366; 						//tank length
@@ -30,6 +30,9 @@ Real c_f = 10.0*U_f;
 Real mu_f = 0.0;
 Real k_f = 0.0;
 
+//for initial condition
+Real initial_pressure = 0.0;
+Vecd intial_velocity(0.0, 0.0, 0.0);
 /* resolution which control the quality of polygonalmesh created by geometry system */
 int resolution(50);
 

@@ -21,6 +21,8 @@ namespace SPH {
 		: public ParticleDynamicsWithInnerConfigurations<BodyType, ParticlesType, MaterialType>
 	{
 	protected:
+		size_t number_of_particles_;
+
 		virtual void Initialization(size_t index_particle_i, Real dt = 0.0) = 0;
 		virtual void InnerInteraction(size_t index_particle_i, Real dt = 0.0) = 0;
 		virtual void Update(size_t index_particle_i, Real dt = 0.0) = 0;
@@ -46,6 +48,8 @@ namespace SPH {
 		InteractingBodyType, InteractingParticlesType, InteractingMaterialType>
 	{
 	protected:
+		size_t number_of_particles_;
+
 		virtual void InnerInteraction(size_t index_particle_i, Real dt = 0.0) = 0;
 		virtual void ContactInteraction(size_t index_particle_i, size_t interacting_body_index, Real dt = 0.0) = 0;
 		InnerFunctor functor_inner_interaction_;
@@ -69,6 +73,8 @@ namespace SPH {
 		InteractingBodyType, InteractingParticlesType, InteractingMaterialType>
 	{
 	protected:
+		size_t number_of_particles_;
+
 		virtual void InnerInteraction(size_t index_particle_i, Real dt = 0.0) = 0;
 		virtual void ContactInteraction(size_t index_particle_i, size_t interacting_body_index, Real dt = 0.0) = 0;
 		virtual void Update(size_t index_particle_i, Real dt = 0.0) = 0;
@@ -95,6 +101,8 @@ namespace SPH {
 		InteractingBodyType, InteractingParticlesType, InteractingMaterialType>
 	{
 	protected:
+		size_t number_of_particles_;
+
 		virtual void Initialization(size_t index_particle_i, Real dt = 0.0) = 0;
 		virtual void InnerInteraction(size_t index_particle_i, Real dt = 0.0) = 0;
 		virtual void ContactInteraction(size_t index_particle_i, size_t interacting_body_index, Real dt = 0.0) = 0;
@@ -124,6 +132,8 @@ namespace SPH {
 		InteractingBodyType, InteractingParticlesType, InteractingMaterialType>
 	{
 	protected:
+		size_t number_of_particles_;
+
 		virtual void Initialization(size_t index_particle_i, Real dt = 0.0) = 0;
 		virtual void InnerInteraction(size_t index_particle_i, Real dt = 0.0) = 0;
 		virtual void ContactInteraction(size_t index_particle_i, size_t interacting_body_index, Real dt = 0.0) = 0;

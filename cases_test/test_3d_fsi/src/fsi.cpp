@@ -48,6 +48,10 @@ Real Re 		= 100.0;
 Real mu_f 		= rho0_f * U_f * (2.0 * Cylinder_radius) / Re;
 Real k_f 		= 0.0;
 
+//for fluid initial condition
+Real initial_pressure = 0.0;
+Vecd intial_velocity(0.0, 0.0, 0.0);
+
 //for material properties of the solid
 Real rho0_s 	= 10.0; 								//reference density
 Real poisson 	= 0.4; 									//Poisson ratio

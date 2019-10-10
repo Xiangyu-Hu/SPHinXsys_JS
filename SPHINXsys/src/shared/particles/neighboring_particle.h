@@ -23,13 +23,11 @@ namespace SPH {
 	public:
 		/** Index of the neighbor particle. */
 		size_t j_;
-		/** derivative of kernel function
-		 *  and kernel fucntion values. */
-		Real dW_ij_, W_ij_;
 		/** Unit vector pointing from i to j. */
 		Vecd e_ij_;
-		/** Particle distance. */
-		Real r_ij_;	
+		/** Particle distance, kernel function value 
+		 *  and derivative of kernel fucntion. */
+		Real r_ij_, W_ij_, dW_ij_;	
 
 		/** default constrcutor*/
 		NeighboringParticle() {};
@@ -59,13 +57,10 @@ namespace SPH {
 	public:
 		/** Index of the neighbor particle. */
 		size_t j_;
-		/** derivative of kernel function
-		 *  and kernel fucntion values. */
-		Real dW_ij_, W_ij_;
 		/** Unit vector pointing from i to j. */
-		Vecd e_ij_;
-		/** Particle distance. */
-		Real r_ij_;
+		Vecd e_ij_;	
+		/** Particle distrane, Weighted fucntion and gardient of weighted fucntion. */
+		Real r_ij_, W_ij_, dW_ij_;	
 
 		/** default constrcutor*/
 		ReferenceNeighboringParticle() {};

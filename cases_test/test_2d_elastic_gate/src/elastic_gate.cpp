@@ -59,6 +59,9 @@ Real U_f = 1.0;								/**< Characteristic velocity. */
 Real c_f = 20.0*sqrt(140.0*gravity_g); 		/**< Reference sound speed. */
 Real mu_f = 0.0;							/**< Dynamics viscosity. */
 Real k_f = 0.0;								/**< Thermal conduction rate. */
+
+Real initial_pressure = 0.0;			/**< Initial pressure field. */
+Vec2d intial_velocity(0.0, 0.0);		/**< Initial velocity field. */
 /**
  * @brief Material properties of the elastic gate.
  */

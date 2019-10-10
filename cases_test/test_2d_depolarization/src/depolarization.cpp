@@ -69,29 +69,6 @@ public:
 		body_input_points_volumes_.push_back(make_pair(Point(0.3, 0.7), 0.0));
 	}
 };
- /**
- * application dependent initial condition 
- */
-class DepolarizationInitialCondition
-	: public electro_physiology::ElectroPhysiologyInitialCondition
-{
-public:
-	DepolarizationInitialCondition(SolidBody *muscle)
-		: electro_physiology::ElectroPhysiologyInitialCondition(muscle) {};
-protected:
-	void Update(size_t index_particle_i, Real dt) override 
-	{
-		/** first set all particle at rest*/
-		electro_physiology::ElectroPhysiologyInitialCondition::Update(index_particle_i, dt);
-
-		BaseParticleData &base_particle_data_i = particles_->base_particle_data_[index_particle_i];
-        MuscleParticleData &muscle_particle_data_i = particles_->muscle_body_data_[index_particle_i];
-
-        muscle_particle_data_i.voltage_n_ = exp(-4.0 * ((base_particle_data_i.pos_n_[0] - 1.0) 
-				* (base_particle_data_i.pos_n_[0] - 1.0) + base_particle_data_i.pos_n_[1] * 
-				base_particle_data_i.pos_n_[1]));
-	};
-};
 
 /** 
  * The main program. 
@@ -108,8 +85,8 @@ int main()
 	 */
 	MuscleBody *muscle_body  =  new MuscleBody(system, "MuscleBody", 0, ParticlesGeneratorOps::lattice);
 	Muscle 						material("Muscle", muscle_body, a_0, b_0,d_0, rho_0, 1.0);
-	ElectrophysiologyReaction 	reaction_model("TwoVariableModel",muscle_body, c_m, k, a, mu_1, mu_2, epsilon);
 	MuscleParticles 			particles(muscle_body);
+	ElectrophysiologyReaction 	reaction_model("TwoVariableModel",muscle_body, c_m, k, a, mu_1, mu_2, epsilon);
 	/**
 	 * Particle and body creation of fluid observer.
 	 */
@@ -127,10 +104,14 @@ int main()
 	/**
 	 * The main dynamics algorithm is defined start here.
 	 */
-	/**
+	/** 
 	 * Initialization for electrophysiology computation. 
 	 */	
-	DepolarizationInitialCondition 								initialization(muscle_body);
+	electro_physiology::ElectroPhysiologyInitialCondition 		initialization(muscle_body);
+	/** 
+	 * Iinitialization of specific test case.
+	 */
+	electro_physiology::TransmembranePotentialInitialization 	potential_initialization(muscle_body);
 	/** 
 	 * Corrected strong configuration. 
 	 */	
@@ -158,7 +139,8 @@ int main()
 	/** 
 	 * Pre-simultion. 
 	 */
-	initialization.exec();
+	initialization.parallel_exec();
+	potential_initialization.parallel_exec();
 	correct_configuration.parallel_exec();
 	/** 
 	 * Output global basic parameters. 
