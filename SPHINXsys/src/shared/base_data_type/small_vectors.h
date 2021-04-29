@@ -298,7 +298,7 @@ namespace SPH {
 	using Real = SimTK::Real;
 
 	//useful float point constants 
-	using SimTK::Pi;
+	const Real Pi = Real(M_PI);
 	using SimTK::Infinity;
 	using SimTK::Eps;
 	using SimTK::TinyReal;
