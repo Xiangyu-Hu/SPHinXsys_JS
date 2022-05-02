@@ -1,0 +1,18 @@
+{
+    "name": "sph-in-xsys",
+    "version": "1.0.0",
+    "description": "SPHinXsys_JS build",
+    "author": "Wen-Yang Chu & Bence Rochlitz",
+    "scripts": {
+      "build-docker-wasm": "docker build . -t sph-builder-wasm -f docker/wasm.Dockerfile",
+      "build-docker-x64": "docker build . -t sph-builder-x64 -f docker/x64.Dockerfile",
+      "interactive-docker": "docker run -it -v $PWD:/app sph-builder /bin/bash",
+      "build-wasm": "docker run -u $(id -u):$(id -g) -v $PWD:/app sph-builder-wasm ./build.sh release wasm",
+      "build-x64": "docker run -u $(id -u):$(id -g) -v $PWD:/app sph-builder-x64 ./build.sh release x64"
+    },
+    "dependencies": {},
+    "peerDependencies": {
+      "typescript": ">= 3.8.3"
+    }
+}
+  
