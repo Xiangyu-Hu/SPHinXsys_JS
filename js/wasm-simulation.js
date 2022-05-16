@@ -1,6 +1,8 @@
+import { SimulationVisualizer } from "./simulation-visualizer.js";
+
 const totalStepsCount = 700;
 
-class SimulationWorker {
+export class SimulationWorker {
     constructor(step) {
         this.worker = null;
         this.isIntialized = false;
@@ -9,6 +11,8 @@ class SimulationWorker {
         this.currentStep = 0;
         this.simulationStep = step;
         this.onInitialized = null;
+        this.visualizer = new SimulationVisualizer();
+        this.resultBuffer = [];
     }
 
     setOnInitialized(onInitialized) {
@@ -16,6 +20,7 @@ class SimulationWorker {
     }
 
     start(stlsList) {
+        this.visualizer.init();
         if (this.worker === null) {
             this.worker = new Worker('worker_simulation.js');
             this.worker.onmessage = (e) => {
@@ -32,7 +37,8 @@ class SimulationWorker {
                 }
     
                 if (type === 'result') {
-                    console.log(e.data.value);
+                    this.resultBuffer.push(e.data.value);
+                    this.visualizer.setSimulationResults(this.resultBuffer);
                 }
 
                 if (type === 'step_finished') {
@@ -66,6 +72,7 @@ class SimulationWorker {
     }
 
     stop() {
+        // this.visualizer.readVtuMock();
         this.isStoped = true;
     }
 

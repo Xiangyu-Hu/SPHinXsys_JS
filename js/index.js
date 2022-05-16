@@ -1,3 +1,5 @@
+
+import { SimulationWorker } from "./wasm-simulation.js";
 let simulationWorker = null;
 
 const runSimulation = () => {
@@ -36,3 +38,9 @@ const resumeSimulation = () => {
 const stopSimulation = () => {
     simulationWorker.stop();
 }
+
+
+window.runSimulation = runSimulation;
+window.pauseSimulation = pauseSimulation;
+window.resumeSimulation = resumeSimulation;
+window.stopSimulation = stopSimulation;

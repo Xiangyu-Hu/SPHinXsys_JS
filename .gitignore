@@ -38,3 +38,5 @@ build_x64_debug
 # wasm build
 build_wasm_release
 build_wasm_debug
+
+.DS_Store

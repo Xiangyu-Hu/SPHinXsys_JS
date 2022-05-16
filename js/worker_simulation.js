@@ -85,8 +85,16 @@ onmessage = (e) => {
 
     if (simulationStep % getVtuStep === 0) {
       let vtuData = heartSimulation.vtuData;
-      console.log(vtuData);
-      postMessage({type: 'result', value: vtuData});
+      const retData = {}
+      const mapKeysVtu = vtuData.keys();
+
+      for (let i = 0; i < mapKeysVtu.size(); i++) {
+        const key = mapKeysVtu.get(i);
+        retData[key] = vtuData.get(key)
+      }
+
+      console.log({ retData });
+      postMessage({type: 'result', value: retData });
     }
   }
 
